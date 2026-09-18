@@ -1,6 +1,13 @@
 {
   "name": "frontend",
   "version": "0.0.0",
+  "private": true,
+  "packageManager": "npm@10.9.2",
+
+  "engines": {
+    "node": ">=24.15.0"
+  },
+
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -8,8 +15,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
-  "private": true,
-  "packageManager": "npm@10.9.2",
+
   "dependencies": {
     "@angular/common": "^22.1.0",
     "@angular/compiler": "^22.1.0",
@@ -21,6 +27,7 @@
     "socket.io-client": "^4.8.3",
     "tslib": "^2.3.0"
   },
+
   "devDependencies": {
     "@angular/build": "^22.1.8",
     "@angular/cli": "^22.1.8",
