@@ -1,0 +1,227 @@
+@if (!chatStarted) {
+<main class="welcome-page">
+  <div class="gossip-bubble bubble-one" aria-hidden="true">Hi!</div>
+  <div class="gossip-bubble female-bubble bubble-two" aria-hidden="true">Hello</div>
+  <div class="gossip-bubble female-bubble bubble-three" aria-hidden="true">How are you?</div>
+  <div class="gossip-bubble bubble-four" aria-hidden="true">Let's chat</div>
+  <span class="emoji-balloon emoji-one" aria-hidden="true">💬</span>
+  <span class="emoji-balloon emoji-two" aria-hidden="true">😊</span>
+  <span class="emoji-balloon emoji-three" aria-hidden="true">❤️</span>
+  <span class="emoji-balloon emoji-four" aria-hidden="true">👋</span>
+  <span class="emoji-balloon emoji-five" aria-hidden="true">😂</span>
+  <span class="emoji-balloon emoji-six" aria-hidden="true">🎉</span>
+  <span class="emoji-balloon emoji-seven" aria-hidden="true">✨</span>
+  <span class="emoji-balloon emoji-eight" aria-hidden="true">👍</span>
+  <form class="profile-form" #profileForm="ngForm" (ngSubmit)="startChat()" novalidate>
+    <div class="form-heading">
+      <span class="form-mark" role="img" aria-label="Adults chatting, 18 plus">
+        <span class="brand-person man" aria-hidden="true">👨</span>
+        <span class="brand-talk" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="brand-person woman" aria-hidden="true">👩</span>
+        <b class="age-badge" aria-hidden="true">18+</b>
+      </span>
+      <div>
+        <h1>Chat Shuru Karein</h1>
+        <p>Har Baat, Yahin Se Shuru</p>
+      </div>
+    </div>
+
+    <label for="username">User name</label>
+    <input
+      id="username"
+      name="username"
+      [(ngModel)]="username"
+      #usernameField="ngModel"
+      minlength="3"
+      maxlength="20"
+      required
+      autocomplete="name"
+      (ngModelChange)="limitUsername($event)"
+      placeholder="3 to 20 characters">
+    @if (usernameField.invalid && usernameField.touched) {
+      <small class="field-error">User name must contain 3 to 20 characters.</small>
+    }
+
+    <div class="details-row">
+      <div class="field-group age-field">
+        <label class="field-label" for="age">Age</label>
+        <input
+          id="age"
+          name="age"
+          type="number"
+          [(ngModel)]="age"
+          #ageField="ngModel"
+          min="18"
+          max="99"
+          required
+          inputmode="numeric"
+          (input)="limitAge($event)"
+          placeholder="18–99">
+        @if (ageField.invalid && ageField.touched) {
+          <small class="field-message field-error">Enter 18 to 99.</small>
+        } @else {
+          <small class="field-message">Must be 18–99</small>
+        }
+      </div>
+
+      <div class="field-group gender-field">
+        <span class="field-label">Gender</span>
+        <div class="gender-options">
+          <label [class.selected]="gender === 'Male'">
+            <input type="radio" name="gender" value="Male" [(ngModel)]="gender" required>
+            <span>Male</span>
+          </label>
+          <label [class.selected]="gender === 'Female'">
+            <input type="radio" name="gender" value="Female" [(ngModel)]="gender" required>
+            <span>Female</span>
+          </label>
+        </div>
+        <small class="field-message">Choose one option</small>
+      </div>
+    </div>
+
+    <label class="human-check" [class.checked]="isHuman">
+      <input type="checkbox" name="isHuman" [(ngModel)]="isHuman" required>
+      <span class="custom-check" aria-hidden="true">✓</span>
+      <span>
+        <strong>I am not a robot</strong>
+        <small>Required to continue</small>
+      </span>
+    </label>
+
+    <button class="start-button" type="submit" [disabled]="profileForm.invalid || username.trim().length < 3">
+      <span>Start chat</span>
+      <span class="button-arrow" aria-hidden="true">→</span>
+    </button>
+  </form>
+</main>
+} @else {
+<div class="chat-layout" [class.sidebar-open]="showOnlinePanel">
+<div class="chat-container">
+  <header>
+    <div class="dashboard-brand">
+      <span class="form-mark dashboard-mark" role="img" aria-label="Adults chatting, 18 plus">
+        <span class="brand-person man" aria-hidden="true">👨</span>
+        <span class="brand-talk" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="brand-person woman" aria-hidden="true">👩</span>
+        <b class="age-badge" aria-hidden="true">18+</b>
+      </span>
+      <div>
+        <h2>Chat Shuru Karein</h2>
+        <span class="dashboard-subtitle">Har Baat, Yahin Se Shuru</span>
+      </div>
+    </div>
+    <button
+      type="button"
+      class="presence-button"
+      [class.active]="showOnlinePanel"
+      [attr.aria-expanded]="showOnlinePanel"
+      (click)="showOnlinePanel = !showOnlinePanel">
+      <i></i>
+      <strong>{{ onlineUsers().length }}</strong>
+      <span>online</span>
+      <b aria-hidden="true">{{ showOnlinePanel ? '↑' : '↓' }}</b>
+    </button>
+  </header>
+  <div class="chat-box" #chatBox>
+    <div class="dashboard-emojis" aria-hidden="true">
+      <span class="chat-emoji chat-emoji-one">💬</span>
+      <span class="chat-emoji chat-emoji-two">😊</span>
+      <span class="chat-emoji chat-emoji-three">❤️</span>
+      <span class="chat-emoji chat-emoji-four">👋</span>
+      <span class="chat-emoji chat-emoji-five">😂</span>
+      <span class="chat-emoji chat-emoji-six">✨</span>
+    </div>
+    @for(message of messages(); track message.id) {
+    <div
+      class="message"
+      [class.male-message]="message.gender === 'Male'"
+      [class.female-message]="message.gender === 'Female'"
+      [class.own-message]="message.userId === currentUserId">
+      <div class="message-author">
+        <div class="author-name">
+          <i
+            class="gender-avatar"
+            [class.female]="message.gender === 'Female'"
+            role="img"
+            [attr.aria-label]="message.gender">
+            {{ message.gender === 'Male' ? 'M' : 'F' }}
+          </i>
+          <b>{{message.user}} <small class="user-age">{{ message.age }}</small></b>
+        </div>
+        <span
+          class="status-dot"
+          role="img"
+          [class.online]="isOnline(message.userId)"
+          [attr.aria-label]="isOnline(message.userId) ? 'Online' : 'Offline'"
+          [title]="isOnline(message.userId) ? 'Online' : 'Offline'">
+        </span>
+      </div>
+
+      <div>{{message.text}}</div>
+
+      <small class="message-meta">
+        <span class="message-time">{{message.time | date:'hh:mm a'}}</span>
+        @if (message.userId === currentUserId) {
+          <span
+            class="receipt-tick"
+            [class.read]="message.readBy > 0"
+            role="img"
+            [attr.aria-label]="message.readBy > 0 ? 'Read by ' + message.readBy : 'Delivered'"
+            [title]="message.readBy > 0 ? 'Read by ' + message.readBy : 'Delivered'">
+            {{ message.readBy > 0 ? '✓✓' : '✓' }}
+          </span>
+        }
+      </small>
+    </div>
+    }
+  </div>
+  <div class="typing-indicator">
+    @if (typingUsers().length) {
+      {{ typingUsers()[0].username }}{{ typingUsers().length > 1 ? ' and ' + (typingUsers().length - 1) + ' more' : '' }} typing...
+    }
+  </div>
+  <div class="input-area">
+    <input [(ngModel)]="message" placeholder="Enter message" (ngModelChange)="onMessageInput()" (keyup.enter)="sendMessage()">
+    <button (click)="sendMessage()">
+      Send
+    </button>
+  </div>
+</div>
+@if (showOnlinePanel) {
+  <aside class="online-panel" aria-label="Online users">
+    <div class="online-panel-heading">
+      <div>
+        <strong>Online now</strong>
+        <small>{{ onlineUsers().length }} active users</small>
+      </div>
+      <button type="button" aria-label="Close online users" title="Close" (click)="showOnlinePanel = false">×</button>
+    </div>
+    <input
+      type="search"
+      [ngModel]="onlineSearch"
+      (ngModelChange)="updateOnlineSearch($event)"
+      placeholder="Search online users"
+      aria-label="Search online users">
+    <div class="online-user-list">
+      @for (user of visibleOnlineUsers(); track user.userId) {
+        <div class="online-user-row">
+          <i class="gender-avatar" [class.female]="user.gender === 'Female'" aria-hidden="true">
+            {{ user.gender === 'Male' ? 'M' : 'F' }}
+          </i>
+          <span>{{ user.username }} <small class="user-age">{{ user.age }}</small></span>
+          <i class="online-dot" aria-label="Online"></i>
+        </div>
+      } @empty {
+        <p class="empty-users">No online users found.</p>
+      }
+    </div>
+    @if (filteredOnlineUsers().length > visibleOnlineUsers().length) {
+      <small class="result-limit">
+        Showing 50 of {{ filteredOnlineUsers().length }} matches. Refine your search to find others.
+      </small>
+    }
+  </aside>
+}
+</div>
+}

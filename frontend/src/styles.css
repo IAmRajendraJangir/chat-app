@@ -1,0 +1,36 @@
+* {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	min-height: 100%;
+	margin: 0;
+}
+
+body {
+	background: #f1f5f9;
+	color: #172033;
+	font-family: "Avenir Next", "Segoe UI", sans-serif;
+}
+
+body:has(.chat-layout) {
+	background-color: #f8fafc;
+	background-image:
+		linear-gradient(120deg, rgb(37 99 235 / 16%) 0 18%, transparent 18%),
+		linear-gradient(300deg, rgb(219 39 119 / 14%) 0 17%, transparent 17%),
+		linear-gradient(40deg, transparent 0 47%, rgb(13 148 136 / 8%) 47% 53%, transparent 53%),
+		radial-gradient(circle at 50% 12%, rgb(255 255 255 / 90%) 0 9%, transparent 30%);
+	background-attachment: fixed;
+}
+
+@media (max-width: 760px) {
+	body:has(.chat-layout) {
+		background: #f1f5f9;
+	}
+}
+
+button,
+input {
+	font: inherit;
+}
